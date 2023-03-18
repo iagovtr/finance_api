@@ -10,7 +10,7 @@ const generateAuthToken = (payload) => {
 };
 
 const verifyAuthToken = (request, response, nextFunction) => {
-  const token = request.headers['Authorization'];
+  const token = request.headers['authorization'];
 
   if (!token) {
     return response.status(400).json({ error: 'no token provided' });
