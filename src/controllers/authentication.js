@@ -41,7 +41,7 @@ const signIn = async (request, response, nextFunction) => {
       md5(password) !== activeUserByEmail[0][0].Password
     ) {
       return response
-        .status(400)
+        .status(401)
         .json({ error: 'incorrect email or password' });
     }
 
