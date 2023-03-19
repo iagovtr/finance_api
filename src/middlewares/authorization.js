@@ -11,10 +11,7 @@ const generateAuthToken = (payload) => {
 
 const verifyAuthToken = (request, response, nextFunction) => {
   const token = request.headers['authorization'];
-
-  if (!token) {
-    return response.status(400).json({ error: 'no token provided' });
-  }
+  const { isATokenValidationFromClientApp } = request.body;
 
   jwt.verify(token, JWT_SECRET, (error, decode) => {
     if (error) {
@@ -22,7 +19,11 @@ const verifyAuthToken = (request, response, nextFunction) => {
         .status(500)
         .json({ error: 'failed to authenticate token' });
     }
-    request['tokenData'] = decode;
+
+    if (isATokenValidationFromClientApp) {
+      return response.status(200).json({ decode });
+    }
+
     nextFunction();
   });
 };
