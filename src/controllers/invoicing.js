@@ -1,7 +1,6 @@
 const {
   createNewCard,
   createNewInvoice,
-  createNewExpense,
 } = require('../services/invoicing-queries');
 
 const createCard = async (request, response, nextFunction) => {
