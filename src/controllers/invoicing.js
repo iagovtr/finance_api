@@ -28,36 +28,7 @@ const createInvoice = async (request, response, nextFunction) => {
   }
 };
 
-const createExpense = async (request, response, nextFunction) => {
-  const {
-    title,
-    expenseValue,
-    expenseDate,
-    subCategory,
-    userID,
-    invoice,
-    installments,
-  } = request.body;
-
-  try {
-    await createNewExpense(
-      title,
-      expenseValue,
-      expenseDate,
-      subCategory,
-      userID,
-      invoice,
-      installments
-    );
-
-    response.status(201).json({ message: 'Ok' });
-  } catch (error) {
-    nextFunction(error);
-  }
-};
-
 module.exports = {
   createCard,
   createInvoice,
-  createExpense,
 };
