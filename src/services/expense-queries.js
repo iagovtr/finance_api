@@ -1,14 +1,11 @@
 const finance = require('../connections/financedb');
 
-const getAllExpensesByCustomer = async () => {
+const getAllExpensesByCustomer = async (customerID) => {
   try {
     const expenses = await finance.query(
-      `SELECT 
-        e.ExpenseID, e.UserID, e.Title, sc.SubCategory, e.ExpenseValue, e.ExpenseDate, c.Surname, e.Installments 
-      FROM Expense e
-      JOIN SubCategory sc ON e.SubCategory = sc.SubCategoryID
-      JOIN Invoice i ON i.InvoiceID = e.Invoice
-      JOIN Card c ON c.CardID = i.Card`
+      `SELECT d.id, d.nome,d.preco, d.data_compra, sc.nome sub_categoria, d.observacao, d.numero_parcela, d.usuarioid, d.status, d.data_criacao, d.data_ultima_atualizacao
+        FROM despesa d JOIN subcategoria sc ON d.subcategoriaid = sc.id 
+        WHERE usuarioid = '${customerID}'`
     );
 
     return expenses[0];
@@ -19,7 +16,7 @@ const getAllExpensesByCustomer = async () => {
 
 const getAllSubCategories = async () => {
   try {
-    const subcategories = await finance.query(`SELECT * FROM SubCategory`);
+    const subcategories = await finance.query(`SELECT * FROM subcategoria`);
 
     return subcategories[0];
   } catch {
@@ -28,18 +25,18 @@ const getAllSubCategories = async () => {
 };
 
 const createNewExpense = async (
-  title,
+  expenseName,
   expenseValue,
   expenseDate,
   subCategory,
-  userID,
-  invoice,
-  installments
+  observations,
+  installments,
+  customerID
 ) => {
   try {
     await finance.query(
-      `INSERT INTO Expense (Title, ExpenseValue, ExpenseDate, SubCategory, UserID, Invoice, Installments)
-        VALUES ('${title}', '${expenseValue}', '${expenseDate}', '${subCategory}', '${userID}', '${invoice}', '${installments}')`
+      `INSERT INTO despesa (nome, preco, data_compra, subcategoriaid, observacao, numero_parcela, usuarioid, status, data_criacao)
+        VALUES ('${expenseName}', ${expenseValue}, '${expenseDate}', ${subCategory}, '${observations}', '${installments}', ${customerID}, 1, GETDATE())`
     );
   } catch {
     throw new CustomError(500, 'failed to create expense');

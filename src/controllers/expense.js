@@ -5,8 +5,13 @@ const {
 } = require('../services/expense-queries');
 
 const loadAllExpensesByCustomer = async (request, response, nextFunction) => {
+  const { customerID } = request.query;
+
+  if (!customerID)
+    return response.status(400).json({ error: 'customerID is required' });
+
   try {
-    const expenses = await getAllExpensesByCustomer();
+    const expenses = await getAllExpensesByCustomer(customerID);
 
     response.status(200).json({ expenses: expenses });
   } catch (error) {
@@ -25,24 +30,24 @@ const loadAllSubCategories = async (request, response, nextFunction) => {
 
 const createExpense = async (request, response, nextFunction) => {
   const {
-    title,
+    expenseName,
     expenseValue,
     expenseDate,
     subCategory,
-    userID,
-    invoice,
+    observations,
+    customerID,
     installments,
   } = request.body;
 
   try {
     await createNewExpense(
-      title,
+      expenseName,
       expenseValue,
       expenseDate,
       subCategory,
-      userID,
-      invoice,
-      installments
+      observations,
+      installments,
+      customerID
     );
 
     response.status(201).json({ message: 'Ok' });
